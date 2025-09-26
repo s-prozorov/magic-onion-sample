@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lw.MagicOnion.Sample.Server", "Lw.MagicOnion.Sample.Server\Lw.MagicOnion.Sample.Server.csproj", "{7CD94607-CFE8-4374-812F-22215727DA96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lw.MagicOnion.Sample.Shared", "Lw.MagicOnion.Sample.Shared\Lw.MagicOnion.Sample.Shared.csproj", "{38B28C9D-D9C5-4ECA-B83B-0239FB3FFF70}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7CD94607-CFE8-4374-812F-22215727DA96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CD94607-CFE8-4374-812F-22215727DA96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CD94607-CFE8-4374-812F-22215727DA96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CD94607-CFE8-4374-812F-22215727DA96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38B28C9D-D9C5-4ECA-B83B-0239FB3FFF70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38B28C9D-D9C5-4ECA-B83B-0239FB3FFF70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38B28C9D-D9C5-4ECA-B83B-0239FB3FFF70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38B28C9D-D9C5-4ECA-B83B-0239FB3FFF70}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
