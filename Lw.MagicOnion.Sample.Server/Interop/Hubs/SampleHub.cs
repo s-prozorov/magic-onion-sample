@@ -9,36 +9,51 @@ namespace Lw.MagicOnion.Sample.Server.Interop.Hubs;
 public class SampleHub : StreamingHubBase<ISampleHub, ISampleHubReceiver>, ISampleHub
 {
     private readonly ISampleGameLogic _gameLogic;
-    private IGroup<ISampleHubReceiver> _group = null!;
-    private Guid? _playerId = null!;
+    private IGroup<ISampleHubReceiver>? _group;
 
     public SampleHub(ISampleGameLogic gameLogic) =>
         _gameLogic = gameLogic;
 
 
-    protected override ValueTask OnConnected()
-    {
-        _playerId = Context.ContextId;
-        return base.OnConnected();
-    }
-
+    private bool IsJoined => _group is not null;
+    private Guid PlayerId => Context.ContextId;
+    
 
     public async Task JoinRoomAsync(int roomId, CancellationToken cancellationToken)
     {
-        _group = await Group.AddAsync(roomId.ToString());
-
-        var (x, y) = _gameLogic.PlaceNewPlayer(playerId);
+        if (IsJoined)
+            return;
         
-        _group.All.OnPlayerJoined(new PlayerJoinedEvent(x, y, playerId));
+        _gameLogic.PlaceNewPlayer(PlayerId);
+        
+        var spawnedAt = _gameLogic.GetPlayerLocation(PlayerId);
+        
+        _group = await Group.AddAsync(roomId.ToString());
+        _group.All.OnPlayerJoined(new PlayerJoinedEvent(spawnedAt, PlayerId));
     }
 
     public Task StartMoveAsync(Direction direction, CancellationToken cancellationToken)
     {
-        if ()
+        if (!IsJoined)
+            return Task.CompletedTask;
+        
+        _gameLogic.BeginMove(PlayerId, direction);
+        _group!.All.OnBeginMove(new PlayerMoveBegin(direction, PlayerId));
+
+        return Task.CompletedTask;
     }
 
     public Task EndMoveAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        if (!IsJoined)
+            return Task.CompletedTask;
+        
+        _gameLogic.EndMove(PlayerId);
+        
+        var stoppedAt = _gameLogic.GetPlayerLocation(PlayerId);
+        
+        _group!.All.OnEndMove(new PlayerMoveEnd(stoppedAt, PlayerId));
+
+        return Task.CompletedTask;
     }
 }

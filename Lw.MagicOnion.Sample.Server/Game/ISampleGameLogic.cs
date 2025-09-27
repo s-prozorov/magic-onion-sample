@@ -4,7 +4,8 @@ namespace Lw.MagicOnion.Sample.Server.Game;
 
 public interface ISampleGameLogic
 {
-    (ushort, ushort) PlaceNewPlayer(Guid playerId);
+    Location PlaceNewPlayer(Guid playerId);
+    Location GetPlayerLocation(Guid playerId);
     void BeginMove(Guid playerId, Direction direction);
     void EndMove(Guid playerId);
 }
