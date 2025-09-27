@@ -8,15 +8,18 @@ namespace Lw.MagicOnion.Sample.Server.Interop.Hubs;
 
 public class SampleHub : StreamingHubBase<ISampleHub, ISampleHubReceiver>, ISampleHub
 {
-    private readonly ISampleGameLogic _gameLogic;
-    private IGroup<ISampleHubReceiver>? _group;
+    private readonly IRoomProvider _roomProvider;
+    
+    private IGroup<ISampleHubReceiver> _group = null!;
+    private int? _roomId = null!;
 
-    public SampleHub(ISampleGameLogic gameLogic) =>
-        _gameLogic = gameLogic;
+    public SampleHub(IRoomProvider roomProvider) =>
+        _roomProvider = roomProvider;
 
 
-    private bool IsJoined => _group is not null;
+    private bool IsJoined => _roomId.HasValue;
     private Guid PlayerId => Context.ContextId;
+    private IRoom Room => _roomProvider.GetRoom(_roomId ?? throw new InvalidOperationException());
     
 
     public async Task JoinRoomAsync(int roomId, CancellationToken cancellationToken)
@@ -24,9 +27,9 @@ public class SampleHub : StreamingHubBase<ISampleHub, ISampleHubReceiver>, ISamp
         if (IsJoined)
             return;
         
-        _gameLogic.PlaceNewPlayer(PlayerId);
-        
-        var spawnedAt = _gameLogic.GetPlayerLocation(PlayerId);
+        Room.PlaceNewPlayer(PlayerId);
+
+        var spawnedAt = Room.GetPlayerLocation(PlayerId);
         
         _group = await Group.AddAsync(roomId.ToString());
         _group.All.OnPlayerJoined(new PlayerJoinedEvent(spawnedAt, PlayerId));
@@ -37,7 +40,7 @@ public class SampleHub : StreamingHubBase<ISampleHub, ISampleHubReceiver>, ISamp
         if (!IsJoined)
             return Task.CompletedTask;
         
-        _gameLogic.BeginMove(PlayerId, direction);
+        Room.BeginMove(PlayerId, direction);
         _group!.All.OnBeginMove(new PlayerMoveBegin(direction, PlayerId));
 
         return Task.CompletedTask;
@@ -48,9 +51,9 @@ public class SampleHub : StreamingHubBase<ISampleHub, ISampleHubReceiver>, ISamp
         if (!IsJoined)
             return Task.CompletedTask;
         
-        _gameLogic.EndMove(PlayerId);
+        Room.EndMove(PlayerId);
         
-        var stoppedAt = _gameLogic.GetPlayerLocation(PlayerId);
+        var stoppedAt = Room.GetPlayerLocation(PlayerId);
         
         _group!.All.OnEndMove(new PlayerMoveEnd(stoppedAt, PlayerId));
 
