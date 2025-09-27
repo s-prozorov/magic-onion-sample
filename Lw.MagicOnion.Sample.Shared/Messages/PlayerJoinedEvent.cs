@@ -1,11 +1,15 @@
+using MessagePack;
+
 namespace Lw.MagicOnion.Sample.Shared.Messages
 {
+    [MessagePackObject]
     public readonly record struct PlayerJoinedEvent
     {
-        public PlayerJoinedEvent(Location location, Guid playerId) => 
+        [SerializationConstructor]
+        public PlayerJoinedEvent(Location location, Guid playerId) =>
             (SpawnedAt, PlayerId) = (location, playerId);
 
-        public Location SpawnedAt { get; }
-        public Guid PlayerId { get; }
+        [Key(0)] public Location SpawnedAt { get; }
+        [Key(1)] public Guid PlayerId { get; }
     }
 }

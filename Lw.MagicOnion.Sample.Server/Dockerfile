@@ -8,14 +8,15 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Lw.MagicOnion.Sample.Server/Lw.MagicOnion.Sample.Server.csproj", "Lw.MagicOnion.Sample.Server/"]
+COPY ["Lw.MagicOnion.Sample.Shared/Lw.MagicOnion.Sample.Shared.csproj", "Lw.MagicOnion.Sample.Shared/"]
 RUN dotnet restore "Lw.MagicOnion.Sample.Server/Lw.MagicOnion.Sample.Server.csproj"
 COPY . .
 WORKDIR "/src/Lw.MagicOnion.Sample.Server"
-RUN dotnet build "Lw.MagicOnion.Sample.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Lw.MagicOnion.Sample.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "Lw.MagicOnion.Sample.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Lw.MagicOnion.Sample.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
