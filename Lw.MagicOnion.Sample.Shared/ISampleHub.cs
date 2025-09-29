@@ -6,8 +6,8 @@ namespace Lw.MagicOnion.Sample.Shared
 
     public interface ISampleHub : IStreamingHub<ISampleHub, ISampleHubReceiver>
     {
-        Task JoinRoomAsync(int roomId, CancellationToken cancellationToken);
-        Task StartMoveAsync(Direction direction, CancellationToken cancellationToken);
-        Task EndMoveAsync(CancellationToken cancellationToken);
+        Task JoinRoomAsync(int roomId);
+        Task StartMoveAsync(Direction direction);
+        Task EndMoveAsync();
     }
 }

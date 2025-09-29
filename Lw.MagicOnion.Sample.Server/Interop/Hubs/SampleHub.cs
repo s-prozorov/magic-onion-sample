@@ -22,10 +22,12 @@ public class SampleHub : StreamingHubBase<ISampleHub, ISampleHubReceiver>, ISamp
     private IRoom Room => _roomProvider.GetRoom(_roomId ?? throw new InvalidOperationException());
     
 
-    public async Task JoinRoomAsync(int roomId, CancellationToken cancellationToken)
+    public async Task JoinRoomAsync(int roomId)
     {
         if (IsJoined)
             return;
+        
+        _roomId = roomId;
         
         Room.PlaceNewPlayer(PlayerId);
 
@@ -35,18 +37,17 @@ public class SampleHub : StreamingHubBase<ISampleHub, ISampleHubReceiver>, ISamp
         _group.All.OnPlayerJoined(new PlayerJoinedEvent(spawnedAt, PlayerId));
     }
 
-    public Task StartMoveAsync(Direction direction, CancellationToken cancellationToken)
+    public Task StartMoveAsync(Direction direction)
     {
         if (!IsJoined)
             return Task.CompletedTask;
         
         Room.BeginMove(PlayerId, direction);
         _group!.All.OnBeginMove(new PlayerMoveBegin(direction, PlayerId));
-
         return Task.CompletedTask;
     }
 
-    public Task EndMoveAsync(CancellationToken cancellationToken)
+    public Task EndMoveAsync()
     {
         if (!IsJoined)
             return Task.CompletedTask;
